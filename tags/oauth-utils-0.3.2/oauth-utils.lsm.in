@@ -1,0 +1,19 @@
+Begin3
+Title:		oauth-utils
+Version:	@VERSION@
+Entered-date:	@ISODATE@
+Description:	command line utilities for oauth
+		@configure_input@
+		a command line oAuth consumer in the style of curl
+		using liboauth.sf.net
+Keywords:	oAuth, CLI
+Author: 	robin@gareus.org (Robin Gareus)
+Maintained-by:	robin@gareus.org (Robin Gareus)
+Primary-site:	metlab.unc.edu pub/Linux/apps/some/directory
+		31k oauth_utils-@VERSION@.tar.gz
+		500  oauth_utils.lsm
+Alternate-site: 
+Original-site:  
+Platforms:      
+Copying-policy:	GNU copyleft
+End

@@ -1,0 +1,15 @@
+TODO:
+
+* parameter handling for each stage:
+    1. how are arguments parsed (unescape,base64,..)
+    2. how are they used when making the request (get: url-escape, post: unescape)
+    3. how are they formatted for output.
+! rework stdout/stderr messages (verbose) -> pipe
+* properly read RSA-key..
+* allow to read _all_ parameters from file similar to curl '-d @<file-name>'
+  --data-binary, --data-ascii (unescape params as '-f' does)
+* ask before overwriting data-file (allow it it's empty or can be parsed)
+* add "dump-signature-only(and exit)" mode|=64
+* oauthverify: allow to require method from -f  (method_set) and clear it
+* optionally chmod the config file upon creation. 
+* add support for oauth_body_hash (from file or stdin)

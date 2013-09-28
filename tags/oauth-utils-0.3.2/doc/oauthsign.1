@@ -1,0 +1,191 @@
+.\"                              hey, Emacs:   -*- nroff -*-
+.\" oauth-utils is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.TH OAUTHSIGN 1 "October 16, 2008"
+.\" Please update the above date whenever this man page is modified.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins (default)
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.\"
+.\" defines for verbose text
+.de Vb \" Begin verbatim text
+.ft CW
+.nf
+.ne \\$1
+..
+.de Ve \" End verbatim text
+.ft R
+.fi
+..
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+
+.SH NAME
+oauthsign \- oauth command line tool
+.SH SYNOPSIS
+.B oauthsign
+.RI [ options ]
+.RI < URL >
+.RI [ CKey ]
+.RI [ CSec ]
+.RI [ TKey ]
+.RI [ Tsec ]
+.SH DESCRIPTION
+\fBoauthsign\fP offers a simple way to generate or make OAuth signed HTTP requests.
+.PP
+\fBoauthsign\fP implements an OAuth consumer...
+.SH OPTIONS
+\fBoauthsign\fP accepts the following options:
+.TP
+.B  --dry-run
+Take no real actions.
+.TP
+.B  --no-warn
+Disable warnings.
+.TP
+.BR  -q , " --quiet" , " --silent"
+Inhibit usual output.
+.TP
+.B  -v, --verbose
+Print more information.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-V, \-\-version
+Show version of program.
+.TP
+.B \-b, \-\-base-string
+Print OAuth base-string and exit.
+.TP
+.B \-B, \-\-base-url
+Print OAuth base-URL and exit.
+.TP
+.B \-r, \-\-request <type>
+Set the HTTP request type (HEAD, PUT, POST, GET [default],..).
+.TP
+.B \-p, \-\-post
+Same as '-r POST'
+.TP
+.B \-d, \-\-data <key>[=<value>]
+Add key=value URL query parameters. Both key and value are expected to be plain ASCII. oauthsign will URL-encode them.
+.TP
+.B \-m, \-\-signature-method <method>
+Specify the oauth signature method (PLAINTEXT, RSA-SHA1, HMAC-SHA1 [default]).
+.TP
+.B \-c, \-\-CK, \-\-consumer-key <text>
+Set consumer-key.
+.TP
+.B \-C, \-\-CS, \-\-consumer-secret <text>
+Set consumer-secret.
+.TP
+.B \-t, \-\-TK, \-\-token-key <text>
+Set token-key.
+.TP
+.B \-T, \-\-TS, \-\-token-secret <text>
+Set token-secret.
+.TP
+.B \-f, \-\-file <filename>
+Read tokens and secrets from config-file.
+.TP
+.B \-w
+Write tokens to config-file.
+.TP
+.B \-F <filename>
+Set config-file name w/o reading the file. useful for writing to a different file than reading eg. '-f file1 -F file2 -w'
+.TP
+.B \-x
+Make HTTP request and return the replied content.
+.TP
+.B \-X
+Make HTTP request and parse the reply for tokens.
+.TP
+.B \-\-dry-run
+Take no real actions (with -x, -w or -X)
+.TP
+.B \-e, \-\-erase-token
+Clear the [access|request] token (key&secret).
+.TP
+.B \-E, \-\-erase-all
+Wipe consumer and token information and reset signature method to HMAC-SHA1.
+.TP
+.B \-\-erase-consumer-key
+Unset the required consumer-key (don't require a specific consumer-key for the validation to succeed)
+.TP
+.B \-\-erase-consumer-secret
+Unset the consumer-secret
+.TP
+.B \-\-erase-consumer-key
+Unset the required token-key (any token will validate)
+.TP
+.B \-\-erase-token-secret
+Unset the token-secret
+.TP
+.B \-\-G
+Print the request-parameters as url-encoded string according to RFC3986, even if the POST method was choosen.
+.TP
+.B \-\-P
+Toggle parameter escaping for output. with -P, POST params will be escaped and GET parameter won't. This is non-standard behaviour.
+.TP
+.B \-\-curl
+Output a curl commandline. (not with -x or -X)
+.PP
+The position of parameters -d, -f, -F, -e, -E and all tokens matters!
+Tokens are read from file at the moment the -f option is parsed overriding
+the current value(s). Optional trailing key/secret params are parsed last.
+eg. '\-f config.txt -e -C secret -F out.txt -w' reads the settings from file,
+then deletes the access/request tokens and finally overrides the consumer-
+secret. Only the consumer-key is left from config.txt and will be saved 
+to out.txt along with the new secret. If -X is given and the HTTP request
+succeeds, the received token and secret will be stored in out.txt as well.
+.PP
+The request URL is constructed by first parsing all query-parameters from
+the URL; then -d parameters are added, and finally oauth_XYZ params 
+appended. The order of the request parameters (while different in the oauth
+base-url) is preserved.
+.PP
+Note that there is also a difference between empty ("") and unset (NULL) parameters: 
+an empty parameter is still included in the request, while an unset parameter is not.
+use '-e' or '-E' to unset previously set parameters. 
+.SH EXAMPLE
+run the following commands in sequence to walk though an
+.URL "http://term.ie/oauth/example/" "OAuth example".
+Connecting to the server requires online connectivity. The file \fI/tmp/test.oaf\fP is used to store the OAuth tokens between the requests.
+
+.PP
+.Vb 1
+\&oauthsign \-X \-f /tmp/test.oaf \-w \-e \-c key \-C secret http://term.ie/oauth/example/request_token.php
+\&oauthsign \-X \-f /tmp/test.oaf \-w http://term.ie/oauth/example/access_token.php
+\&oauthsign \-x \-f /tmp/test.oaf "http://term.ie/oauth/example/echo_api.php?method=foo%20bar&bar=baz"
+\&oauthsign \-x \-f /tmp/test.oaf \-d method=foo%20bar \-d "bar=baz &test%" \-\-post http://term.ie/oauth/example/echo_api.php
+.Ve
+
+.SH "SEE ALSO"
+.BR oauth-utils (7).
+.SH AUTHOR
+oauth-utils was written by Robin Gareus <robin@gareus.org>.
+.PP
+This manual page was also written by Robin Gareus <robin@gareus.org>,
+for the Debian project (but may be used by others).
+
